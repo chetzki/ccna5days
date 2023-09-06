@@ -1,0 +1,65 @@
+Conf t
+vlan 25
+name ___.com
+int vlan 25
+no shut
+ip add 10._._._ 255._._.___
+ip dhcp excluded add 10._._._ 10._._._
+ip dhcp pool ____.com
+network 10._._._ 255._._.___
+default-router 10._._._
+domain-name ____.com
+dns-server 10.62.1.10
+option 150 ip 10.62.100.8
+Int fa0/5
+swi acc vlan 25
+
+Conf t
+vlan 25
+name telus.com
+int vlan 25
+no shut
+ip add 10.0.32.1 255.255.224.0
+ip dhcp excluded-add 10.0.32.1 10.0.32.100
+ip dhcp pool telus.com
+network 10.0.32.0 255.255.224.0
+default-router 10.0.32.1
+domain-name telus.com
+dns-server 10.62.1.10
+option 150 ip 10.62.100.8
+Int fa0/5
+swi acc vlan 25
+
+Conf t
+vlan 25
+name etelecare.com
+int vlan 25
+no shut
+ip add 10.0.64.1 255.255.192.0
+ip dhcp excluded-add 10.0.64.1 10.0.64.100
+ip dhcp pool etelecare.com
+network 10.0.64.0 255.255.192.0
+default-router 10.0.64.1
+domain-name etelecare.com
+dns-server 10.62.1.10
+option 150 ip 10.62.100.8
+Int fa0/5
+swi acc vlan 25
+end
+
+Conf t
+vlan 25
+name dukhakami.com
+int vlan 25
+no shut
+ip add 10.0.0.33 255.255.255.224
+ip dhcp excluded-add 10.0.0.33 10.0.0.37
+ip dhcp pool dukhakami.com
+network 10.0.0.32 255.255.255.224
+default-router 10.0.0.33
+domain-name dukhakami.com
+dns-server 10.62.1.10
+option 150 ip 10.62.100.8
+Int fa0/5
+swi acc vlan 25
+end

@@ -2,7 +2,7 @@ import json
 import telnetlib
 
 # read the JSON configuration file
-with open('importv1.json', 'r') as f:
+with open('wifi.json', 'r') as f:
     config = json.load(f)
 
 # extract the configuration parameters

@@ -1,0 +1,16 @@
+{
+"aironet" :  [
+    {
+        "host_ip": "10.62.10.3",
+        "hostname": "62ChetAironet",
+        "username": "admin",
+        "password": "pass",
+        "ssid": "62-VICTORIACOURT",
+        "authentication": "open",
+        "key-man": "wpa",
+        "wifi-pass": "C1sc0123",
+        "channel": "12",
+        "enc-mod": "tkip"
+    }
+]
+}
