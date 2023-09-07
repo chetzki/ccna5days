@@ -1,0 +1,22 @@
+p1
+config T
+ip route 192.168.1.128 255.255.255.224 10.2.1.1
+ip route 10.2.2.0 255.255.255.0 10.2.1.1
+do sh ip route static
+
+p2:
+config T
+ip route 192.168.1.128 255.255.255.224 10.2.1.2
+ip route 10.2.2.0 255.255.255.0 10.2.1.2
+do sh ip route static
+
+R1
+config t
+router bgp 1
+neighbor 208.8.8.4 remote -as 45
+neighbor 207.7.7.2 remote -as 2
+neighbor 209.9.9.3 remote -as 3
+Network 208.8.8.0 255.255.255.0
+Network 207.7.7.0 255.255.255.0
+Network 209.9.9.0 255.255.255.0
+Network 10.1.1.0 255.255.255.252

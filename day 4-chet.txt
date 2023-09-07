@@ -1,0 +1,287 @@
+@VPNJP
+config T
+no logging console
+no ip domain-lookup
+ip route 0.0.0.0 0.0.0.0 200.0.0.20
+int gi1
+ip add 200.0.0.10 255.255.255.0
+no shut
+int gi3
+ip add 10.10.10.1 255.255.255.0
+no shut
+
+@VPNPH
+config T
+no logging console
+no ip domain-lookup
+ip route 0.0.0.0 0.0.0.0 200.0.0.10
+int gi1
+ip add 200.0.0.20 255.255.255.0
+no shut
+int gi3
+ip add 10.20.20.1 255.255.255.0
+no shut
+
+Cybersecurity foundations
+
+task 1 dual network
+cmd
+route delete 0.0.0.0
+route add 0.0.0.0 mask 0.0.0.0 
+route add 10.0.0.0 mask 255.0.0.0 10.62.1.4
+route add 200.0.0.0 mask 255.0.0.0 10.62.
+
+block remte access
+@EDGE
+conf t
+hostname EDGE-62
+no access-list 1
+access-list 1 permit 10.62.1.10 0.0.0.0
+access-list 1 permit 10.62.0.0 0.0.255.255
+line vty 0 14
+access-class 1 in
+end
+
+
+block all the ip address from the other table
+@edge
+conf t
+no access-list 2
+access-list 2 deny 10.11.0.0 0.0.255.255
+access-list 2 deny 10.21.0.0 0.0.255.255
+access-list 2 deny 10.31.0.0 0.0.255.255
+access-list 2 deny 10.41.0.0 0.0.255.255
+access-list 2 deny 10.51.0.0 0.0.255.255
+access-list 2 deny 10.61.0.0 0.0.255.255
+access-list 2 permit any
+int gi0/0/1
+ip access-group 2 in
+end
+
+Unlock:
+int gi0/0/1
+ip access-group 2 in
+
+SIRA:
+conf t
+no access-list 2
+
+
+
+ex. bagong grupo
+conf t
+no access-list 3
+access-list 3 deny 10.11.0.0 0.0.255.255
+access-list 3 deny 10.21.0.0 0.0.255.255
+access-list 3 deny 10.31.0.0 0.0.255.255
+access-list 3 deny 10.12.0.0 0.0.255.255
+access-list 3 deny 10.22.0.0 0.0.255.255
+access-list 3 deny 10.32.0.0 0.0.255.255
+access-list 3 permit any
+int gi0/0/1
+ip access-group 3 in
+end
+
+
+ex. bagong grupo 2
+conf t
+no access-list 4
+access-list 4 deny 10.31.0.0 0.0.255.255
+access-list 4 deny 10.41.0.0 0.0.255.255
+access-list 4 deny 10.51.0.0 0.0.255.255
+access-list 4 deny 10.32.0.0 0.0.255.255
+access-list 4 deny 10.42.0.0 0.0.255.255
+access-list 4 deny 10.52.0.0 0.0.255.255
+access-list 4 permit any
+int gi0/0/1
+ip access-group 4 in
+end
+
+ex 5. if too many deny, use permit
+
+conf t
+no access-list 5
+access-list 5 permit 10.61.0.0 0.0.255.255
+access-list 5 permit 10.71.0.0 0.0.255.255
+access-list 5 deny any
+int gi0/0/1
+ip access-group 5 in
+end
+
+how to check:
+sh ip int gi0/0/1
+sh ip access-list
+
+ex 5: how to block russian ip address:
+
+@edge
+conf t
+no ip access-list standard BLOCKRUSSIA
+ip access-list standard BLOCKRUSSIA
+deny 10.11.0.0 0.0.255.255
+deny 10.21.0.0 0.0.255.255
+deny 10.31.0.0 0.0.255.255
+deny 10.41.0.0 0.0.255.255
+deny 10.51.0.0 0.0.255.255
+deny 10.61.0.0 0.0.255.255
+permit any
+Int Gi0/0/1
+ip access-group BLOCKRUSSIA in
+do sh ip access-list BLOCKRUSSIA
+
+
+
+Ex 1 Create a Firewall Policy to meet this condition:
+cm will only allow http, and, ssh
+cm2 will allow ping, dns to be open
+
+@CUCM
+conf t
+no access-list 100
+access-list 100 permit tcp any host cm eq 2000
+access-list 100 permit tcp any host cm eq 80
+access-list 100 permit tcp any host cm eq 22
+access-list 100 permit icmp any host cm2
+access-list 100 permit tcp any host cm2 eq 53
+access-list 100 permit udp any host cm2 eq 53
+int fa0/0
+ip access-group 100 in
+do sh ip access-list 100
+
+Ex2: As a security consultant:
+create a cisco firewall policy with conditions:
+cm will allow ping, ssh, dns,
+cm2 will allow http. https
+
+@CUCM
+conf t
+no access-list 101
+access-list 101 permit tcp any host cm eq 22
+access-list 101 permit icmp any host cm
+access-list 101 permit tcp any host cm eq 53
+access-list 101 permit udp any host cm eq 53
+access-list 101 permit tcp any host cm2 eq 443
+access-list 101 permit tcp any host cm2 eq 80
+int fa0/0
+ip access-group 101 in
+do sh ip access-list 101
+
+Ex3: As a security consultant:
+create a cisco firewall policy with conditions:
+cm will allow http, https, cucm
+cm2 will allow telnet, ssh, sip
+conf t
+no access-list 102
+access-list 102 permit tcp any host cm eq 80
+access-list 102 permit tcp any host cm eq 443
+access-list 102 permit tcp any host cm eq 2000
+access-list 102 permit tcp any host cm2 eq 23
+access-list 102 permit tcp any host cm2 eq 22
+access-list 102 permit tcp any host cm2 eq 5060
+int fa0/0
+ip access-group 102 in
+do sh ip access-list 102
+
+Ex 4
+Create a firewall policy to meet this condition:
+hacker: pc, p1, p2, c1, c2
+- pc can http, https cm
+- p1 can ping cm
+- p2 can sccp/cucm on cm
+- c1 can ping cm
+- c2 can http cm
+
+conf t
+no access-list 103
+access-list 103 permit tcp host pc host cm eq 80
+access-list 103 permit tcp host p1 host cm eq 443
+access-list 103 permit icmp host p1 host cm 
+access-list 103 permit tcp host p2 host cm eq 2000
+access-list 103 permit icmp host c1 host cm
+access-list 103 permit tcp host c2 host cm eq 80
+int fa0/0
+ip access-group 103 in
+do sh ip access-list 103
+
+Ex 4
+Create a firewall policy to meet this condition:
+hacker: pc, p1, p2, c1, c2
+- pc can telnet, ssh cm
+- p1 can cucm cm
+- p2 can ping on cm
+- c1 can http cm
+- c2 can ping cm
+
+conf t
+no access-list 104
+access-list 104 permit tcp host pc host cm eq 23
+access-list 104 permit tcp host pc host cm eq 22
+access-list 104 permit tcp host p1 host cm eq 2000
+access-list 104 permit icmp host p2 host cm 
+access-list 104 permit tcp host c1 host cm eq 80
+access-list 104 permit icmp host c2 host cm
+int fa0/0
+ip access-group 103 in
+do sh ip access-list 103
+
+lab 1: dhcpserver:
+config t
+int gi 2
+ip add 192.168.102.5 255.255.255.0
+no shut
+int gi 3
+ip add 10.20.30.1 255.255.255.0
+no shut
+config t 
+ip dhcp excluded-add 10.20.30.1 10.20.30.49
+ip dhcp pool BLDGDHCP
+network 10.20.30.0 255.255.255.0
+default-router 10.20.30.1
+domain-name ccnaexam.com
+dns-server 8.8.8.8
+option 150 ip 1.1.1.1
+
+
+Lab 2 : Enable SSH encryption on Cisco
+Config t
+ip domain-name ccnaexam.com
+Username boss privilege 15 secret pass
+crypto key generate rsa
+	512 --> 1024
+ip ssh version 2
+
+lab 3 : Network time protocol = NTP
+NTP synchronizes with all cisco device
+step 1 internet connection:
+
+config t
+int gi 1
+ip add dhcp
+no shut
+do ping 8.8.8.8
+ip domain-lookup
+ip name-server 8.8.8.8
+do ping time.google.com
+ntp server time.google.com
+do sh ntp association
+
+lab 4: Danger lab: Most important lab. the hardest lab
+Network Address Translation
+3 steps to NAT:		pretend/NAT
+BLDG 1 : 10.20.30.50	192.168.108.69
+BLDG 2 : 10.20.30.51	192.168.108.88
+NAT interface:
+gi1 = outside/InternetFacing
+gi3 = Inside/NATInside
+
+conf t
+access-list 8 permit 10.20.30.0 0.0.0.255
+int gi1
+ip nat OUTSIDE
+int gi3
+ip nat INSIDE
+
+ip nat inside source static 10.20.30.50 192.168.108.69
+ip nat inside source static 10.20.30.51 192.168.108.88
+ip nat inside source list 8 int gi1 overload --> Dukha
+sh ip nat trans
